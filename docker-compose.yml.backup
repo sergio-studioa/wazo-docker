@@ -1,10 +1,9 @@
-version: "3.7"
-
 services:
   nginx:
     image: nginx
     ports:
-      - "8443:443"
+      - '127.0.0.1:8443:443'
+      - '[::1]:8443:443'
     env_file:
       - variables.env
     volumes:
@@ -26,6 +25,7 @@ services:
       - dird
       - phoned
       - provd
+      - ui
       - webhookd
       - websocketd
 
@@ -40,8 +40,8 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
 
   rabbitmq:
     image: rabbitmq
@@ -56,8 +56,8 @@ services:
     image: wazoplatform/wazo-auth
     env_file:
       - variables.env
-    ports:
-      - "9497:9497"
+    expose:
+      - 9497
     volumes:
       - ./etc/wazo-auth.yml:/etc/wazo-auth/conf.d/config.yml:ro
       - type: bind
@@ -72,8 +72,8 @@ services:
       dockerfile: Dockerfile-confd
     env_file:
       - variables.env
-    ports:
-      - "9486:9486"
+    expose:
+      - 9486
     volumes:
       - ./etc/wazo-confd.yml:/etc/wazo-confd/conf.d/config.yml:ro
       - ./etc/xivo-dao.yml:/etc/xivo-dao/conf.d/config.yml:ro
@@ -203,8 +203,6 @@ services:
       dockerfile: Dockerfile-dird
     env_file:
       - variables.env
-    ports:
-    - "9489:9489"
     expose:
       - 9489
     volumes:
@@ -320,14 +318,14 @@ services:
     entrypoint: ["/bin/wazo-agentd/init"]
     command: ["wazo-agentd"]
 
-  # ui:
-  #   image: wazoplatform/wazo-ui
-  #   env_file:
-  #     - variables.env
-  #   expose:
-  #     - 9296
-  #   volumes:
-  #     - ./etc/wazo-ui.yml:/etc/wazo-ui/conf.d/config.yml:ro
+  ui:
+    image: wazoplatform/wazo-ui
+    env_file:
+      - variables.env
+    expose:
+      - 9296
+    volumes:
+      - ./etc/wazo-ui.yml:/etc/wazo-ui/conf.d/config.yml:ro
 
   bootstrap:
     image: wazoplatform/uc-bootstrap

@@ -203,8 +203,6 @@ services:
       dockerfile: Dockerfile-dird
     env_file:
       - variables.env
-    ports:
-    - "9489:9489"
     expose:
       - 9489
     volumes:
